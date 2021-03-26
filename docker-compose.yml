@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+
+    mysql:
+        image: mysql:5.7
+        container_name: magento-mysql
+        restart: unless-stopped
+        networks:
+            magentonet:
+                ipv4_address: 172.168.0.10
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+
+    redis:
+        image: redis:latest
+        container_name: magento-redis
+        restart: unless-stopped
+        networks:
+            magentonet:
+                ipv4_address: 172.168.0.11
+        ports:
+            - 6379:6379
+
+    nginx:
+        container_name: magento-nginx
+        build: ./nginx
+        restart: unless-stopped
+        networks:
+            magentonet:
+                ipv4_address: 172.168.0.12
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - $HOME/Projects/Personal/Docker/docker-php/project:/mnt
+
+    php-fpm:
+        container_name: magento-php-fpm
+        build: ./php-fpm
+        restart: unless-stopped
+        networks:
+            magentonet:
+                ipv4_address: 172.168.0.13
+        ports:
+            - 9001:9001
+        volumes:
+            - $HOME/Projects/Personal/Docker/docker-php/project:/mnt
+
+networks:
+    magentonet:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+            - subnet: 172.168.0.0/24 
+
