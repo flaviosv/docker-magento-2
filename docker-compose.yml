@@ -4,10 +4,10 @@ services:
 
     mysql:
         image: mysql:5.7
-        container_name: magento-mysql
+        container_name: flaviosv-magento-mysql
         restart: unless-stopped
         networks:
-            magentonet:
+            flaviosv-magentonet:
                 ipv4_address: 172.168.0.10
         ports:
             - 3306:3306
@@ -16,41 +16,72 @@ services:
 
     redis:
         image: redis:latest
-        container_name: magento-redis
+        container_name: flaviosv-magento-redis
         restart: unless-stopped
         networks:
-            magentonet:
+            flaviosv-magentonet:
                 ipv4_address: 172.168.0.11
         ports:
             - 6379:6379
 
     nginx:
-        container_name: magento-nginx
+        container_name: flaviosv-magento-nginx
         build: ./nginx
         restart: unless-stopped
         networks:
-            magentonet:
+            flaviosv-magentonet:
                 ipv4_address: 172.168.0.12
         ports:
             - 80:80
             - 443:443
         volumes:
-            - $HOME/Projects/Personal/Docker/docker-php/project:/mnt
+            - $HOME/Projects/Personal/Magento/magento-commerce-developer-professional-study:/mnt
 
     php-fpm:
-        container_name: magento-php-fpm
+        container_name: flaviosv-magento-php-fpm
         build: ./php-fpm
         restart: unless-stopped
         networks:
-            magentonet:
+            flaviosv-magentonet:
                 ipv4_address: 172.168.0.13
         ports:
             - 9001:9001
         volumes:
-            - $HOME/Projects/Personal/Docker/docker-php/project:/mnt
+            - $HOME/Projects/Personal/Magento/magento-commerce-developer-professional-study:/mnt
+
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.12.0
+        container_name: flaviosv-magento-elasticsearch
+        restart: unless-stopped
+        environment:
+            - node.name=es01
+            - cluster.name=es-docker-cluster
+            - discovery.type=single-node
+            - bootstrap.memory_lock=true
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        networks:
+            flaviosv-magentonet:
+                ipv4_address: 172.168.0.14
+        ports:
+            - 9200
+
+    elastichq:
+        image: elastichq/elasticsearch-hq
+        container_name: magento-elastichq
+        environment:
+            - HQ_DEFAULT_URL=http://172.168.0.14:9200
+        networks:
+            flaviosv-magentonet:
+                ipv4_address: 172.168.0.15
+        ports:
+            - 5000:5000
 
 networks:
-    magentonet:
+    flaviosv-magentonet:
         driver: bridge
         ipam:
             driver: default

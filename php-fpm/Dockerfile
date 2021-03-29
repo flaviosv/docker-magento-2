@@ -1,11 +1,13 @@
 FROM alpine:latest 
 WORKDIR /mnt
 
-ENV MY_USER="magento"
-ENV MY_GROUP="nobody"
-ENV MY_UID="1000"
+ARG USER
+ARG GROUP
+ARG GID
+ARG UID
 
-RUN adduser --home /home/${MY_USER} --uid ${MY_UID} --shell /bin/ash --ingroup ${MY_GROUP} --disabled-password ${MY_USER}
+RUN addgroup -g ${GID} ${GROUP}
+RUN adduser --home /home/${USER} --uid ${UID} --shell /bin/ash --ingroup ${GROUP} --disabled-password ${USER}
 
 RUN apk add gcc make g++ zlib-dev
 RUN apk add vim
@@ -17,7 +19,6 @@ RUN apk add php7-ctype
 RUN apk add php7-curl
 RUN apk add php7-dom
 RUN apk add php7-gd
-# RUN apk add php7-hash
 RUN apk add php7-iconv
 RUN apk add php7-intl
 RUN apk add php7-mbstring
@@ -49,13 +50,23 @@ RUN apk add php7-xmlreader
 
 RUN apk add openssh
 
-COPY config/keys /home/${MY_USER}/.ssh
+COPY config/keys /home/${USER}/.ssh
+COPY config/.profile /home/${USER}/.profile
+COPY config/.ash_aliases /home/${USER}/.ash_aliases
 
 COPY config/magento.conf /etc/php7/php-fpm.d/www.conf
 COPY config/php.ini /etc/php7/php.ini
 
-RUN chown magento:nobody -Rf /home/${MY_USER}/.ssh
+COPY entrypoint.sh /tmp/entrypoint.sh
+RUN chmod a+x /tmp/entrypoint.sh
+
+RUN chown ${USER}:${USER} -Rf /home/${USER}/.ssh
+
+RUN sed -i "s/FPM_USER/${USER}/g" /etc/php7/php-fpm.d/www.conf
+RUN sed -i "s/FPM_GROUP/${GROUP}/g" /etc/php7/php-fpm.d/www.conf
+
+RUN composer self-update --1
 
 EXPOSE 9001
 
-CMD ["php-fpm7", "-F"]ap
+CMD ["sh", "/tmp/entrypoint.sh"]ap
