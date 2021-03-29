@@ -47,6 +47,7 @@ RUN apk add php7-tokenizer
 RUN apk add php7-session
 RUN apk add php7-fileinfo
 RUN apk add php7-xmlreader
+RUN apk add php7-sodium
 
 RUN apk add openssh
 
