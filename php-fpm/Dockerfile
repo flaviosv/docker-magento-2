@@ -1,13 +1,15 @@
 FROM alpine:latest 
 WORKDIR /mnt
 
+RUN apk add shadow
+
 ARG USER
 ARG GROUP
 ARG GID
 ARG UID
 
-RUN addgroup -g ${GID} ${GROUP}
-RUN adduser --home /home/${USER} --uid ${UID} --shell /bin/ash --ingroup ${GROUP} --disabled-password ${USER}
+RUN groupadd -g ${GID} ${GROUP}
+RUN useradd --home /home/${USER} --uid ${UID} --shell /bin/ash --gid ${GID} ${USER}
 
 RUN apk add gcc make g++ zlib-dev
 RUN apk add vim
@@ -52,22 +54,28 @@ RUN apk add php7-sodium
 RUN apk add openssh
 
 COPY config/keys /home/${USER}/.ssh
-COPY config/.profile /home/${USER}/.profile
-COPY config/.ash_aliases /home/${USER}/.ash_aliases
 
+# PHP-FPM Settings
 COPY config/magento.conf /etc/php7/php-fpm.d/www.conf
 COPY config/php.ini /etc/php7/php.ini
-
-COPY entrypoint.sh /tmp/entrypoint.sh
-RUN chmod a+x /tmp/entrypoint.sh
-
-RUN chown ${USER}:${USER} -Rf /home/${USER}/.ssh
 
 RUN sed -i "s/FPM_USER/${USER}/g" /etc/php7/php-fpm.d/www.conf
 RUN sed -i "s/FPM_GROUP/${GROUP}/g" /etc/php7/php-fpm.d/www.conf
 
 RUN composer self-update --1
 
+# Commands
+COPY commands/compiletheme /usr/bin/compiletheme
+COPY commands/compileall /usr/bin/compileall
+RUN chmod 777 /usr/bin/compiletheme /usr/bin/compileall
+
+
+RUN chmod 777 -Rf /home/${USER}
+
 EXPOSE 9001
+
+# Entrypoint
+COPY entrypoint.sh /tmp/entrypoint.sh
+RUN chmod a+x /tmp/entrypoint.sh
 
 CMD ["sh", "/tmp/entrypoint.sh"]ap

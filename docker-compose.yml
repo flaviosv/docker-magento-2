@@ -8,7 +8,7 @@ services:
         restart: unless-stopped
         networks:
             flaviosv-magentonet:
-                ipv4_address: 172.168.0.10
+                ipv4_address: 199.192.0.10
         ports:
             - 3306:3306
         environment:
@@ -20,7 +20,7 @@ services:
         restart: unless-stopped
         networks:
             flaviosv-magentonet:
-                ipv4_address: 172.168.0.11
+                ipv4_address: 199.192.0.11
         ports:
             - 6379:6379
 
@@ -30,7 +30,7 @@ services:
         restart: unless-stopped
         networks:
             flaviosv-magentonet:
-                ipv4_address: 172.168.0.12
+                ipv4_address: 199.192.0.12
         ports:
             - 80:80
             - 443:443
@@ -43,7 +43,7 @@ services:
         restart: unless-stopped
         networks:
             flaviosv-magentonet:
-                ipv4_address: 172.168.0.13
+                ipv4_address: 199.192.0.13
         ports:
             - 9001:9001
         volumes:
@@ -65,7 +65,7 @@ services:
                 hard: -1
         networks:
             flaviosv-magentonet:
-                ipv4_address: 172.168.0.14
+                ipv4_address: 199.192.0.14
         ports:
             - 9200
 
@@ -73,10 +73,10 @@ services:
         image: elastichq/elasticsearch-hq
         container_name: magento-elastichq
         environment:
-            - HQ_DEFAULT_URL=http://172.168.0.14:9200
+            - HQ_DEFAULT_URL=http://199.192.0.14:9200
         networks:
             flaviosv-magentonet:
-                ipv4_address: 172.168.0.15
+                ipv4_address: 199.192.0.15
         ports:
             - 5000:5000
 
@@ -86,5 +86,5 @@ networks:
         ipam:
             driver: default
             config:
-            - subnet: 172.168.0.0/24 
+            - subnet: 199.192.0.0/24 
 

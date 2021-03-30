@@ -1,8 +1,8 @@
-chmod a+x build_and_run.sh
+chmod a+x scripts/*
 
 ./build_and_run.sh
 
-magento setup:install --base-url=http://dev.magento.local --db-host=172.168.0.10 --db-name=magento --db-user=root --db-password=root --admin-firstname=Magento --admin-lastname=Admin --admin-email=magento.admin@magentoadmin.com --admin-user=admin --admin-password=123qwe123 --language=en_US --currency=USD --timezone=America/Sao_Paulo --use-rewrites=1  --elasticsearch-host=172.168.0.14 --elasticsearch-port=9200
+magento setup:install --base-url=http://dev.magento.local --db-host=199.192.0.10 --db-name=magento --db-user=root --db-password=root --admin-firstname=Magento --admin-lastname=Admin --admin-email=magento.admin@magentoadmin.com --admin-user=admin --admin-password=123qwe123 --language=en_US --currency=USD --timezone=America/Sao_Paulo --use-rewrites=1  --elasticsearch-host=199.192.0.14 --elasticsearch-port=9200
 
 docker-compose build \
     --build-arg USER=$USER \
