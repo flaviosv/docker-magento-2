@@ -39,7 +39,11 @@ services:
 
     php-fpm:
         container_name: flaviosv-magento-php-fpm
-        build: ./php-fpm
+        build: 
+            context: ./php-fpm
+            args:
+                ALPINE_VERSION: 3.11
+                PHP_VERSION: 7.3
         restart: unless-stopped
         networks:
             flaviosv-magentonet:

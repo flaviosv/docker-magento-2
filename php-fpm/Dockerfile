@@ -1,4 +1,4 @@
-FROM alpine:latest 
+FROM alpine:3.11
 WORKDIR /mnt
 
 RUN apk add shadow
@@ -7,6 +7,8 @@ ARG USER
 ARG GROUP
 ARG GID
 ARG UID
+ARG PHP_VERSION
+ARG ALPINE_VERSION
 
 RUN groupadd -g ${GID} ${GROUP}
 RUN useradd --home /home/${USER} --uid ${UID} --shell /bin/ash --gid ${GID} ${USER}
@@ -14,6 +16,9 @@ RUN useradd --home /home/${USER} --uid ${UID} --shell /bin/ash --gid ${GID} ${US
 RUN apk add gcc make g++ zlib-dev
 RUN apk add vim
 RUN apk add git
+
+RUN apk --update-cache add ca-certificates && \
+    echo "https://dl.bintray.com/php-alpine/v${ALPINE_VERSION}/php-${PHP_VERSION}" >> /etc/apk/repositories
 
 RUN apk add php7 php7-fpm
 RUN apk add php7-bcmath
@@ -62,7 +67,7 @@ COPY config/php.ini /etc/php7/php.ini
 RUN sed -i "s/FPM_USER/${USER}/g" /etc/php7/php-fpm.d/www.conf
 RUN sed -i "s/FPM_GROUP/${GROUP}/g" /etc/php7/php-fpm.d/www.conf
 
-RUN composer self-update --1
+# RUN composer self-update --1
 
 # Commands
 COPY commands/compiletheme /usr/bin/compiletheme
