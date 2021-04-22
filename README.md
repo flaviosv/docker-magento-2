@@ -1,25 +1,49 @@
-chmod a+x scripts/*
+# Docker for Magento 2
 
-./build_and_run.sh
+## Considerations
 
-magento setup:install --base-url=http://dev.magento.local --db-host=199.192.0.10 --db-name=magento --db-user=root --db-password=root --admin-firstname=Magento --admin-lastname=Admin --admin-email=magento.admin@magentoadmin.com --admin-user=admin --admin-password=123qwe123 --language=en_US --currency=USD --timezone=America/Sao_Paulo --use-rewrites=1  --elasticsearch-host=199.192.0.14 --elasticsearch-port=9200
+ - Tested only in Linux Ubuntu 20.4
+ - Developed for PHP 7.4 / Magento 2.4 (for PHP 7.3 / Magento 2.3 go to branch php7.3)
+ - **DO NOT USE THIS CONTAINER TO PRODUCTION ENVIROMENT**
 
-docker-compose build \
-    --build-arg USER=$USER \
-    --build-arg UID=$(id -u ${USER}) \
-    --build-arg GROUP=$(id -gn ${USER}) \
-    --build-arg GID=$(id -g ${USER}) \
-    ; \
- docker-compose up
+## How to use
 
- rm -rfv install; composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition=2.4.2 install -vvvv
+ - Clone the project in any folder
+ - In ```docker-compose.yml``` change both volumes on nginx and php-fpm nodes to the path of your 
+project
+ - In terminal and inside the container project folder, run ```chmod a+x ./scripts```
+ - Run ```./build_and_run.sh```, this command will build and run all the container
+ - To enter in the container, run ```docker exec -it flaviosv-magento-<image_name> ​/bin/ash```
+ - If you are into the php-fpm container, **ALWAYS** log in to the same user of your computer, using ```su <your user>```, if you don't do that, you will face permission problems
 
-magento alias
 
-n98 alias
+## Available commands 
 
-adicionar keys
+ - ```./build_and_run.sh``` build the docker-compose.yml file and start the container
 
-login com o proprio usuário
+## NGINX Configurations
 
-Testado apenas no linux
+ - Add ```dev.magento.local``` (the default dns for this container) in your /etc/hosts
+ - There is a default configuration in ```./nginx/config/sites-enabled```, the default host is mentioned above and you can add new configurations
+ - You can customize the nginx default configurations in ```./nginx/config/nginx.conf```
+ - **There is support to SSL**
+
+###### You must rebuild the container if you change any configuration
+
+## PHP-FPM Configurations
+
+ - If you want to add your ssh keys to the php-fpm container, just add it in ```./php-fpm/config/keys```
+ - You can change the php (php.ini) or php-fpm (magento.conf) configurations in ```./php-fpm/config```
+
+###### You must rebuild the container if you change any configuration or add keys
+
+
+## Available commands inside PHP-FPM container
+
+ - ```compileall``` run the composer install, setup:upgrade, disable Magento_Csp, compile the assets and php files, disable all the frontend cache and flush the cache
+ - ```compiletheme <your theme>``` run all the commands from ```compileall``` but only for an specific theme
+ - ```magento``` instead of ```php bin/magento``` to run the magento CLI commands
+ - ```n98-magerun2``` to use the [N98 MageRun CLI](https://github.com/netz98/n98-magerun2)
+ 
+
+###### Feel free to change the commands, you must rebuild the container if you do that

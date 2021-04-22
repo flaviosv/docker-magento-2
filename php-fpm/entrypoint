@@ -1,12 +1,17 @@
-#!/bin/bash
+#!/bin/sh
 
+# Copy magento binary
 if [ -e /mnt/bin/magento ] 
 then 
+    echo "Copying magento binary to usr folder"
+    rm -f /usr/bin/magento 
     ln -s /mnt/bin/magento /usr/bin/magento 
 fi
 
+# Download N98 Mage Run
 if [ ! -e /usr/bin/n98-magerun2.phar ] 
 then
+    echo "Downloading and adding to usr folder n98 mage run"
     wget https://files.magerun.net/n98-magerun2.phar
 
     mv ./n98-magerun2.phar /usr/bin/n98-magerun2.phar

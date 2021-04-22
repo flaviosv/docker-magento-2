@@ -1,5 +1,8 @@
-FROM alpine:latest 
+FROM alpine:3.11 
 WORKDIR /mnt
+
+RUN apk --update-cache add ca-certificates && \
+    echo "https://dl.bintray.com/php-alpine/v3.11/php-7.3" >> /etc/apk/repositories
 
 RUN apk add shadow
 
@@ -15,6 +18,7 @@ RUN apk add gcc make g++ zlib-dev
 RUN apk add vim
 RUN apk add git
 
+RUN apk add composer
 RUN apk add php7 php7-fpm
 RUN apk add php7-bcmath
 RUN apk add php7-ctype
@@ -44,7 +48,6 @@ RUN apk add php7-pear
 RUN apk add php7-dev
 RUN apk add php7-xmlwriter
 RUN pecl install xdebug
-RUN apk add composer
 RUN apk add php7-tokenizer
 RUN apk add php7-session
 RUN apk add php7-fileinfo
@@ -62,20 +65,17 @@ COPY config/php.ini /etc/php7/php.ini
 RUN sed -i "s/FPM_USER/${USER}/g" /etc/php7/php-fpm.d/www.conf
 RUN sed -i "s/FPM_GROUP/${GROUP}/g" /etc/php7/php-fpm.d/www.conf
 
-RUN composer self-update --1
-
 # Commands
 COPY commands/compiletheme /usr/bin/compiletheme
 COPY commands/compileall /usr/bin/compileall
 RUN chmod 777 /usr/bin/compiletheme /usr/bin/compileall
 
-
 RUN chmod 777 -Rf /home/${USER}
+
+# Entrypoint
+COPY entrypoint /usr/bin/entrypoint
+RUN chmod 777 /usr/bin/entrypoint
 
 EXPOSE 9001
 
-# Entrypoint
-COPY entrypoint.sh /tmp/entrypoint.sh
-RUN chmod a+x /tmp/entrypoint.sh
-
-CMD ["sh", "/tmp/entrypoint.sh"]ap
+ENTRYPOINT entrypoint
