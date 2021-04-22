@@ -16,6 +16,8 @@ COPY crt /etc/nginx
 
 RUN mkdir -p /run/nginx
 
+RUN ln -sf /dev/stderr /var/log/nginx/error.log
+
 EXPOSE 80
 EXPOSE 443
 
