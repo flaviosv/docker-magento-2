@@ -1,8 +1,5 @@
-FROM alpine:3.11 
+FROM alpine:latest
 WORKDIR /mnt
-
-RUN apk --update-cache add ca-certificates && \
-    echo "https://dl.bintray.com/php-alpine/v3.11/php-7.3" >> /etc/apk/repositories
 
 RUN apk add shadow
 
@@ -66,9 +63,10 @@ RUN sed -i "s/FPM_USER/${USER}/g" /etc/php7/php-fpm.d/www.conf
 RUN sed -i "s/FPM_GROUP/${GROUP}/g" /etc/php7/php-fpm.d/www.conf
 
 # Commands
-COPY commands/compiletheme /usr/bin/compiletheme
-COPY commands/compileall /usr/bin/compileall
-RUN chmod 777 /usr/bin/compiletheme /usr/bin/compileall
+RUN mkdir /home/${USER}/commands
+ADD commands /home/${USER}/commands
+RUN chmod a+x /home/${USER}/commands/*
+RUN cp /home/${USER}/commands/* /usr/bin
 
 RUN chmod 777 -Rf /home/${USER}
 
