@@ -13,7 +13,9 @@
 project
  - In terminal and inside the container project folder, run ```chmod a+x ./scripts```
  - Run ```./build_and_run.sh```, this command will build and run all the container
- - To enter in the container, run ```docker exec -it flaviosv-magento-<image_name> ​/bin/ash```
+ - To enter in the container, run ```docker exec -it flaviosv-magento-<COPY commands/compiletheme /usr/bin/compiletheme
+COPY commands/compileall /usr/bin/compileall
+RUN chmod 777 /usr/bin/compiletheme /usr/bin/compileallimage_name> ​/bin/ash```
  - If you are into the php-fpm container, **ALWAYS** log in to the same user of your computer, using ```su <your user>```, if you don't do that, you will face permission problems
 
 
@@ -44,6 +46,7 @@ project
  - ```compiletheme <your theme>``` run all the commands from ```compileall``` but only for an specific theme
  - ```magento``` instead of ```php bin/magento``` to run the magento CLI commands
  - ```n98-magerun2``` to use the [N98 MageRun CLI](https://github.com/netz98/n98-magerun2)
+ - You can create new commands, just add a new one inside of ```./php-fpm/comands```
  
 
 ###### Feel free to change the commands, you must rebuild the container if you do that
