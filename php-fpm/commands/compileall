@@ -5,7 +5,7 @@ rm -rf generated pub/static var/view_preprocessed  && \
 php -d memory_limit=4G -f bin/magento setup:upgrade && \
 php -d memory_limit=4G -f bin/magento module:disable Magento_Csp && \
 php -d memory_limit=4G -f bin/magento cache:flush && \
-php -d memory_limit=4G -f bin/magento setup:static-content:deploy -f && \
+php -d memory_limit=4G -f bin/magento setup:static-content:deploy -f --jobs 3 && \
 php -d memory_limit=4G -f bin/magento setup:di:compile && \
 php -d memory_limit=4G -f bin/magento cache:disable layout block_html full_page config && \
 php -d memory_limit=4G -f bin/magento cache:flush 

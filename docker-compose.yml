@@ -35,15 +35,11 @@ services:
             - 80:80
             - 443:443
         volumes:
-            - $HOME/Projects/Personal/Magento/magento-commerce-developer-professional-study:/mnt
+            - /var/projects/personal/magento/magento-commerce-developer-professional-study:/mnt
 
     php-fpm:
         container_name: flaviosv-magento-php-fpm
-        build: 
-            context: ./php-fpm
-            args:
-                ALPINE_VERSION: 3.11
-                PHP_VERSION: 7.3
+        build: ./php-fpm
         restart: unless-stopped
         networks:
             flaviosv-magentonet:
@@ -51,7 +47,7 @@ services:
         ports:
             - 9001:9001
         volumes:
-            - $HOME/Projects/Personal/Magento/magento-commerce-developer-professional-study:/mnt
+            - /var/projects/personal/magento/magento-commerce-developer-professional-study:/mnt
 
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.12.0
