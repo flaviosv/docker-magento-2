@@ -13,9 +13,7 @@
 project
  - In terminal and inside the container project folder, run ```chmod a+x ./scripts```
  - Run ```./build_and_run.sh```, this command will build and run all the container
- - To enter in the container, run ```docker exec -it flaviosv-magento-<COPY commands/compiletheme /usr/bin/compiletheme
-COPY commands/compileall /usr/bin/compileall
-RUN chmod 777 /usr/bin/compiletheme /usr/bin/compileallimage_name> ​/bin/ash```
+ - To enter in the container, run ```docker exec -it flaviosv-magento-<image_name> ​/bin/ash``` (php-fpm, nginx and other images are available in ```docker-compose.yml```)
  - If you are into the php-fpm container, **ALWAYS** log in to the same user of your computer, using ```su <your user>```, if you don't do that, you will face permission problems
 
 
